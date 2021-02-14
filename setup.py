@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as rm:
 
 setup(
     name="mvnx", 
-    version="0.1",
+    version="0.1.1",
     author="Alex Harston",
     author_email="alex@harston.io",
     description="A lightweight commandline parser for the MVNX motion capture file format",
@@ -20,5 +20,5 @@ setup(
         "Operating System :: OS Independent",
     ],
     packages=find_packages(),
-    install_requires=['numpy', 'argparse', 'xml'],
+    install_requires=['numpy', 'argparse'],
 )
