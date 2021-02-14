@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as rm:
 
 setup(
     name="mvnx", 
-    version="0.1.4",
+    version="0.1.5",
     author="Alex Harston",
     author_email="alex@harston.io",
     description="A lightweight commandline parser for the MVNX motion capture file format",
