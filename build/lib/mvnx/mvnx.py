@@ -134,7 +134,8 @@ class MVNX:
         for frame in frames[3:]:
             for child in frame[self.mapping[modality]:self.mapping[modality]+1]:
                 holding_list.append(child.text.split(' '))           
-        return np.array(holding_list)
+        holding_list = np.array(holding_list)
+        return holding_list.astype(np.float)
 
     def parse_time(self):
         frames = self.root[2][6][3:]
