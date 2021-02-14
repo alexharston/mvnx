@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import argparse
 import warnings
 
-class MVNX():
+class MVNX:
     """
     The abstract parser object to run through the XML tree structure of the MVNX file format
     and extract the relevant information into dictionaries and numpy arrays. Super simple, needs
@@ -117,51 +117,24 @@ class MVNX():
         self.userScenario = self.root[2].attrib['userScenario']
         self.securityCode = self.root[3].attrib['code']
         return self.root
-
-
+    
+    
     def parse_modality(self, modality):
-        """
-        With a given XML Tree, parse out the salient modalities within each frame
-        
+
+        """[With a given XML Tree, parse out the salient modalities within each frame]
+
         Args:
+
             modality ([string]): [the name of the modality]
+
         """
+
         holding_list = []
         frames = self.root[2][6]
         for frame in frames[3:]:
             for child in frame[self.mapping[modality]:self.mapping[modality]+1]:
-                holding_list.append(child.text.split(' '))
-            if modality == 'orientation':
-                self.orientation = np.array(holding_list)
-            elif modality == 'position':
-                self.position = np.array(holding_list)
-            elif modality == 'velocity':
-                self.velocity = np.array(holding_list)
-            elif modality == 'acceleration':
-                self.acceleration = np.array(holding_list)
-            elif modality == 'angularVelocity':
-                self.angularVelocity = np.array(holding_list)
-            elif modality == 'angularAcceleration':
-                self.angularAcceleration = np.array(holding_list)
-            elif modality == 'footContacts':
-                self.footContacts = np.array(holding_list)
-            elif modality == 'sensorFreeAcceleration':
-                self.sensorFreeAcceleration = np.array(holding_list)
-            elif modality == 'sensorOrientation':
-                self.sensorOrientation == np.array(holding_list)
-            elif modality  == 'sensorMagneticField':
-                self.sensorMagneticField = np.array(holding_list)
-            elif modality == 'jointAngle':
-                self.jointAngle = np.array(holding_list)
-            elif modality == 'jointAngleXZY':
-                self.jointAngleXZY = np.array(holding_list)
-            elif modality == 'jointAngleErgo':
-                self.jointAngleErgo = np.array(holding_list)
-            elif modality == 'centerOfMass':
-                self.centerOfMass = np.array(holding_list)
-           
-        print(modality, ': ', holding_list)
-        return np.array(modality)
+                holding_list.append(child.text.split(' '))           
+        return np.array(holding_list)
 
     def parse_time(self):
         frames = self.root[2][6][3:]
@@ -207,6 +180,10 @@ class MVNX():
         for joint in root[2][3]:
             self.joints[joint.attrib['label']] = [joint[0].text, joint[1].text]
         return self.joints
+
+    def parse_all(self):
+        for key in self.mapping.keys():
+            setattr(self, key, self.parse_modality(key))
 
 
 def main():
