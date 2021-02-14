@@ -1,8 +1,9 @@
 import numpy as np
 import xml.etree.ElementTree as ET
 import argparse
+import warnings
 
-class ParseObject:
+class MVNX():
     """
     The abstract parser object to run through the XML tree structure of the MVNX file format
     and extract the relevant information into dictionaries and numpy arrays. Super simple, needs
@@ -208,15 +209,22 @@ class ParseObject:
         return self.joints
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", help="the MVNX file to parse")
-parser.add_argument("-m", "--modality", help="the modality to parse")
-args = parser.parse_args()
-if args.file:
-    print(f'{args.file} selected - parsing MVNX')
-PO = ParseObject()
-PO.parse_mvnx(args.file)
-PO.parse_modality(args.modality)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", help="the MVNX file to parse")
+    parser.add_argument("-m", "--modality", help="the modality to parse")
+    args = parser.parse_args()
+    if (args.input == None and args.length == None):
+        parser.print_help()
+    else:
+        if args.file:
+            print(f'{args.file} selected - parsing MVNX')
+        mvnx = MVNX()
+        mvnx.parse_mvnx(args.file)
+        if args.modality:
+            mvnx.parse_modality(args.modality)
+        else:
+            warnings.warn('No modality selected')
 
-if __name__ == '__main__':
-    PO = ParseObject()
+if __name__ == "__main__":
+    main()
