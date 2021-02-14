@@ -15,4 +15,4 @@ PO.jointAngle
 
 Alternatively, you can run from the command line, using the modality of your choice (in this case, `jointAngle`):
 
-`python3 mvnx.py path/to/file.mvnx --modality jointAngle`
+`python3 mvnx.py --file path/to/file.mvnx --modality jointAngle`

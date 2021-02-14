@@ -1,6 +1,7 @@
 import numpy as np
 import xml.etree.ElementTree as ET
 import argparse
+
 class ParseObject:
     """
     The abstract parser object to run through the XML tree structure of the MVNX file format
@@ -208,7 +209,7 @@ class ParseObject:
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("file", help="the MVNX file to parse")
+parser.add_argument("-f", "--file", help="the MVNX file to parse")
 parser.add_argument("-m", "--modality", help="the modality to parse")
 args = parser.parse_args()
 if args.file:
