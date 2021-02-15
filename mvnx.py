@@ -11,11 +11,11 @@ class MVNX:
 
     Can also be used as a command line tool.
     """
-    def __init__(self, orientation=None, position=None, velocity=None, \
+    def __init__(self, path, orientation=None, position=None, velocity=None, \
                        acceleration=None, angularVelocity=None, angularAcceleration=None, \
                        footContacts=None, sensorFreeAcceleration=None, sensorMagneticField=None, \
                        sensorOrientation=None, jointAngle=None, jointAngleXZY=None, jointAngleErgo=None, \
-                       centerOfMass=None, mapping=None, path=None, sensors=None, segments=None, joints=None, \
+                       centerOfMass=None, mapping=None, sensors=None, segments=None, joints=None, \
                        root=None, mvn=None, comment=None, subject=None, version=None, build=None, label=None, \
                        frameRate=None, segmentCount=None, recordingDate=None, configuration=None, userScenario=None, \
                        securityCode=None, modality=None, time=None, index=None, timecode=None, ms=None):
@@ -68,8 +68,13 @@ class MVNX:
                             "jointAngleXZY": 11,
                             "jointAngleErgo": 12,
                             "centerOfMass": 13}
+        if path is None:
+            print('Please supply a path')
         self.path = path
         if root is None:
+            self.parse_mvnx(self.path)
+            self.parse_all()
+        else:
             self.root = root
         if time is None:
             self.time = []
