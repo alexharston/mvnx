@@ -78,12 +78,20 @@ class MVNX:
             self.root = root
         if time is None:
             self.time = []
+        else
+            self.time = time
         if index is None:
             self.index = []
+        else
+            self.index = index 
         if timecode is None:
             self.timecode = []
+        else:
+            self.timecode = timecode
         if ms is None:
             self.ms = []
+        else:
+            self.ms = ms
         self.mvn = mvn
         self.comment = comment
         self.subject = subject
