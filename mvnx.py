@@ -82,7 +82,7 @@ class MVNX:
             self.time = time
         if index is None:
             self.index = []
-        else
+        else:
             self.index = index 
         if timecode is None:
             self.timecode = []
@@ -198,12 +198,12 @@ class MVNX:
     def parse_all(self):
         for key in self.mapping.keys():
             setattr(self, key, self.parse_modality(key))
-        self.parse_time()
-        self.parse_timecode()
-        self.parse_ms()
-        self.parse_joints()
-        self.parse_segments()
-        self.parse_sensors()
+        #self.parse_time()
+        #self.parse_timecode()
+        #self.parse_ms()
+        #self.parse_joints()
+        #self.parse_segments()
+        #self.parse_sensors()
 
 
 def main():
@@ -211,13 +211,12 @@ def main():
     parser.add_argument("-f", "--file", help="the MVNX file to parse")
     parser.add_argument("-m", "--modality", help="the modality to parse")
     args = parser.parse_args()
-    if (args.input == None and args.length == None):
+    if (args.file == None and args.modality == None):
         parser.print_help()
     else:
         if args.file:
             print(f'{args.file} selected - parsing MVNX')
-        mvnx = MVNX()
-        mvnx.parse_mvnx(args.file)
+        mvnx = MVNX(args.file)
         if args.modality:
             mvnx.parse_modality(args.modality)
         else:
