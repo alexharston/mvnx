@@ -11,11 +11,11 @@ class MVNX:
 
     Can also be used as a command line tool.
     """
-    def __init__(self, orientation=None, position=None, velocity=None, \
+    def __init__(self, path, orientation=None, position=None, velocity=None, \
                        acceleration=None, angularVelocity=None, angularAcceleration=None, \
                        footContacts=None, sensorFreeAcceleration=None, sensorMagneticField=None, \
                        sensorOrientation=None, jointAngle=None, jointAngleXZY=None, jointAngleErgo=None, \
-                       centerOfMass=None, mapping=None, path=None, sensors=None, segments=None, joints=None, \
+                       centerOfMass=None, mapping=None, sensors=None, segments=None, joints=None, \
                        root=None, mvn=None, comment=None, subject=None, version=None, build=None, label=None, \
                        frameRate=None, segmentCount=None, recordingDate=None, configuration=None, userScenario=None, \
                        securityCode=None, modality=None, time=None, index=None, timecode=None, ms=None):
@@ -68,17 +68,22 @@ class MVNX:
                             "jointAngleXZY": 11,
                             "jointAngleErgo": 12,
                             "centerOfMass": 13}
-        self.path = path
-        if root is None:
-            self.root = root
         if time is None:
             self.time = []
+        else:
+            self.time = time
         if index is None:
             self.index = []
+        else:
+            self.index = index 
         if timecode is None:
             self.timecode = []
+        else:
+            self.timecode = timecode
         if ms is None:
             self.ms = []
+        else:
+            self.ms = ms
         self.mvn = mvn
         self.comment = comment
         self.subject = subject
@@ -92,6 +97,14 @@ class MVNX:
         self.userScenario = userScenario
         self.securityCode = securityCode
         self.modality = modality
+        if path is None:
+            print('Please supply a path')
+        self.path = path
+        if root is None:
+            self.parse_mvnx(self.path)
+            self.parse_all()
+        else:
+            self.root = root
              
       
     def parse_mvnx(self, path):
@@ -135,7 +148,7 @@ class MVNX:
             for child in frame[self.mapping[modality]:self.mapping[modality]+1]:
                 holding_list.append(child.text.split(' '))           
         holding_list = np.array(holding_list)
-        return holding_list.astype(np.float)
+        return holding_list.astype(float)
 
     def parse_time(self):
         frames = self.root[2][6][3:]
@@ -167,24 +180,30 @@ class MVNX:
             return self.parse_modality(arg)
 
     def parse_sensors(self):
-        for sensor in root[2][2]:
+        for sensor in self.root[2][2]:
             self.sensors.append(sensor.attrib['label'])
         return self.sensors
     
     def parse_segments(self):
-        for segment in root[2][1]:
+        for segment in self.root[2][1]:
             self.segments[segment.attrib['id']] = segment.attrib['label']
         return self.segments
     
     
     def parse_joints(self):
-        for joint in root[2][3]:
+        for joint in self.root[2][3]:
             self.joints[joint.attrib['label']] = [joint[0].text, joint[1].text]
         return self.joints
 
     def parse_all(self):
         for key in self.mapping.keys():
             setattr(self, key, self.parse_modality(key))
+        self.parse_time()
+        self.parse_joints()
+        self.parse_segments()
+        self.parse_sensors()
+        self.parse_timecode()
+        self.parse_ms()
 
 
 def main():
@@ -192,15 +211,14 @@ def main():
     parser.add_argument("-f", "--file", help="the MVNX file to parse")
     parser.add_argument("-m", "--modality", help="the modality to parse")
     args = parser.parse_args()
-    if (args.input == None and args.length == None):
+    if (args.file == None and args.modality == None):
         parser.print_help()
     else:
         if args.file:
             print(f'{args.file} selected - parsing MVNX')
-        mvnx = MVNX()
-        mvnx.parse_mvnx(args.file)
+        mvnx = MVNX(args.file)
         if args.modality:
-            mvnx.parse_modality(args.modality)
+            print(mvnx.parse_modality(args.modality))
         else:
             warnings.warn('No modality selected')
 

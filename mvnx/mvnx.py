@@ -68,14 +68,6 @@ class MVNX:
                             "jointAngleXZY": 11,
                             "jointAngleErgo": 12,
                             "centerOfMass": 13}
-        if path is None:
-            print('Please supply a path')
-        self.path = path
-        if root is None:
-            self.parse_mvnx(self.path)
-            self.parse_all()
-        else:
-            self.root = root
         if time is None:
             self.time = []
         else:
@@ -105,6 +97,14 @@ class MVNX:
         self.userScenario = userScenario
         self.securityCode = securityCode
         self.modality = modality
+        if path is None:
+            print('Please supply a path')
+        self.path = path
+        if root is None:
+            self.parse_mvnx(self.path)
+            self.parse_all()
+        else:
+            self.root = root
              
       
     def parse_mvnx(self, path):
@@ -198,12 +198,12 @@ class MVNX:
     def parse_all(self):
         for key in self.mapping.keys():
             setattr(self, key, self.parse_modality(key))
-        #self.parse_time()
-        #self.parse_timecode()
-        #self.parse_ms()
-        #self.parse_joints()
-        #self.parse_segments()
-        #self.parse_sensors()
+        self.parse_time()
+        self.parse_joints()
+        self.parse_segments()
+        self.parse_sensors()
+        self.parse_timecode()
+        self.parse_ms()
 
 
 def main():
