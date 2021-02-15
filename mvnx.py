@@ -148,7 +148,7 @@ class MVNX:
             for child in frame[self.mapping[modality]:self.mapping[modality]+1]:
                 holding_list.append(child.text.split(' '))           
         holding_list = np.array(holding_list)
-        return holding_list.astype(np.float)
+        return holding_list.astype(float)
 
     def parse_time(self):
         frames = self.root[2][6][3:]
@@ -218,7 +218,7 @@ def main():
             print(f'{args.file} selected - parsing MVNX')
         mvnx = MVNX(args.file)
         if args.modality:
-            mvnx.parse_modality(args.modality)
+            print(mvnx.parse_modality(args.modality))
         else:
             warnings.warn('No modality selected')
 
