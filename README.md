@@ -7,16 +7,17 @@ To run the MVNX parser, create an MVNX object, and run `parse_all()`, which will
 ```python
 from mvnx import MVNX
 mvnx = MVNX('path/to/file.mvnx')
-mvnx.parse_all()
 mvnx.orientation
 mvnx.jointAngle
+mxnv.segments
+mvnx.joints
 ```
 or you can parse individual modalities (all in camelCase) , as below:
 
 ```
 mvnx = MVNX('path/to/file.mvnx')
 mvnx.parse_modality('orientation')
-mvnx.parse_modality('jointAngle')
+mvnx.parse_modality('angularVelocity')
 mvnx.orientation
 mvnx.angularVelocity
 ```
