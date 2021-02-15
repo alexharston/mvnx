@@ -78,7 +78,7 @@ class MVNX:
             self.root = root
         if time is None:
             self.time = []
-        else
+        else:
             self.time = time
         if index is None:
             self.index = []
