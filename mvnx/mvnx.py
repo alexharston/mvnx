@@ -185,6 +185,12 @@ class MVNX:
     def parse_all(self):
         for key in self.mapping.keys():
             setattr(self, key, self.parse_modality(key))
+        self.parse_time()
+        self.parse_timecode()
+        self.parse_ms()
+        self.parse_segments()
+        self.parse_joints()
+        self.parse_sensors()
 
 
 def main():
