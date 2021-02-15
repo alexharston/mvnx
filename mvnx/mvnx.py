@@ -189,7 +189,6 @@ class MVNX:
             self.segments[segment.attrib['id']] = segment.attrib['label']
         return self.segments
     
-    
     def parse_joints(self):
         for joint in self.root[2][3]:
             self.joints[joint.attrib['label']] = [joint[0].text, joint[1].text]
@@ -204,7 +203,6 @@ class MVNX:
         self.parse_sensors()
         self.parse_timecode()
         self.parse_ms()
-
 
 def main():
     parser = argparse.ArgumentParser()
