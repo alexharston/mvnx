@@ -2,8 +2,6 @@
 
 ### A lightweight python library for parsing the MVNX motion capture file format.
 
-To run the MVNX parser, create an MVNX object, and run `parse_all()`, which will then parse all the modalities into the object's attributes, which you can then access with standard dot notation:
-
 ```python
 from mvnx.mvnx import MVNX
 mvnx = MVNX('path/to/file.mvnx')
