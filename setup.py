@@ -21,4 +21,9 @@ setup(
     ],
     packages=find_packages(),
     install_requires=['numpy', 'argparse'],
+    entry_points = {
+        'console_scripts': [
+            'mvnx=mvnx:main'
+        ]
+    }
 )
