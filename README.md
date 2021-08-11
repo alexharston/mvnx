@@ -10,14 +10,14 @@ The simplest way to run the tool is in the following way:
 from mvnx.mvnx import MVNX
 yourfile = MVNX('path/to/file.mvnx')
 ```
-This creates an MVNX object, the data in which can then be read using standard Python dot notation:
+This creates an MVNX object, the data in which can then be read using standard Python dot notation, like so:
 
 ```python
-mvnx.orientation 
-mvnx.jointAngle
-mvnx.angularVelocity
-mxnv.segments
-mvnx.joints
+yourfile.orientation 
+yourfile.jointAngle
+yourfile.angularVelocity
+yourfile.segments
+yourfile.joints
 ```
 or you can parse individual modalities (all in camelCase) , as below:
 ```
