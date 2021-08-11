@@ -7,7 +7,7 @@ You can install the library using `pip install mvnx`
 The simplest way to run the tool is in the following way:
 
 ```python
-from mvnx import MVNX
+from mvnx.mvnx import MVNX
 yourfile = MVNX('path/to/file.mvnx')
 ```
 This creates an MVNX object, the data in which can then be read using standard Python dot notation:
