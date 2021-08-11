@@ -27,6 +27,8 @@ yourfile.parse_modality('angularVelocity')
 ```
 
 ### Alternatively, once installed, you can run the tool from the command line, using `mvnx`.
-You can provide `mvnx` a filepath to your .mvnx file and an output path, and it will read the info into `.npy` file
+You can provide `mvnx` a filepath to your .mvnx file and an output path, and it will read the info into a .npy file
 
 Run it using: `mvnx --file path/to/file.mvnx --output /path/to/output.npy`
+
+Note: the parser at present is doing no batch processing or multiprocessing when parsing the file into an object - it will read directly into memory, so be careful when parsing larger files as it can put load on your system.
