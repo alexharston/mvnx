@@ -104,6 +104,9 @@ class MVNX:
             self.parse_all()
         else:
             self.root = root
+
+    def __repr__(self):
+        return f'<MVNX ({self.path})>'
              
       
     def parse_mvnx(self, path):
