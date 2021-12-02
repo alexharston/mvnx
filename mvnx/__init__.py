@@ -1,5 +1,5 @@
 import numpy as np
-from models import MVNX
+from mvnx.models import MVNX
 import argparse
 import errno
 import os

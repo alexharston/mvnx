@@ -1,9 +1,6 @@
 import numpy as np
 import xml.etree.ElementTree as ET
-import argparse
-import errno
-import os
-import warnings
+
 
 class MVNX:
     """
@@ -118,8 +115,6 @@ class MVNX:
         """
         tree = ET.parse(path)
         self.root = tree.getroot()
-        if self.root is None:
-            self.root = parse_mvnx(self.path)
         self.mvn = self.root[0]
         self.version = self.root[0].attrib['version']
         self.build = self.root[0].attrib['build']
@@ -206,31 +201,4 @@ class MVNX:
         self.parse_timecode()
         self.parse_ms()
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--file", help="the MVNX file to parse")
-    parser.add_argument("-m", "--modality", help="the modality to parse")
-    parser.add_argument("-o", "--output", help="filepath to save parsed data to (saves as .npy)")
-    args = parser.parse_args()
-    if (args.file == None and args.modality == None):
-        parser.print_help()
-    else:
-        try:
-            if args.file:
-                print(f'{args.file} selected - writing MVNX to {args.output}')
-                mvnx = MVNX(args.file)
-                if args.modality:
-                    modality = mvnx.parse_modality(args.modality)
-                    np.save(args.output, modality) 
-                elif args.output:
-                    np.save(args.output, mvnx)
-                else:
-                    warnings.warn('No output location selected, printing to terminal instead')
-            else:
-                raise FileNotFoundError(
-                    errno.ENOENT, os.strerror(errno.ENOENT), args.file)
-        except Exception:
-            print('Something went wrong!')
 
-if __name__ == "__main__":
-    main()

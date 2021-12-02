@@ -1,6 +1,7 @@
-/dist/
+dist/
 *.pyc
 /*.egg-info
 mvnx_video.m
 load_mvnx.m
-
+.DS_Store
+build/

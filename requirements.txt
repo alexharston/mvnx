@@ -1,5 +1,3 @@
-rich
 numpy
 argparse
-tqdm
 
