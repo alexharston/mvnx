@@ -2,6 +2,8 @@
 
 ### A Python parser for the MVNX motion capture file format (.mvnx)
 [![Downloads](https://static.pepy.tech/personalized-badge/mvnx?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/mvnx)
+[![Downloads](https://pepy.tech/badge/mvnx/month)](https://pepy.tech/project/mvnx)
+[![Downloads](https://pepy.tech/badge/mvnx/week)](https://pepy.tech/project/mvnx)
 
 You can install the library using `pip install mvnx`
 
