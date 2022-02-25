@@ -1,7 +1,7 @@
 import numpy as np
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
-
+import h5py
 
 class MVNX:
     """
@@ -205,4 +205,22 @@ class MVNX:
         self.parse_timecode()
         self.parse_ms()
 
+    def save_to_HDF5(self, filepath):
+        """Create an HDF5 file from an MVNX object.
+
+        :param filepath: _description_ - the path to the file you want to create
+        :type filepath: _type_
+        """
+        with h5py.File(f'{filepath}.hdf5', 'w') as f:
+            jointAngle = f.create_dataset("jointAngle", data=self.jointAngle)
+            jointAngleXZY = f.create_dataset("jointAngleXZY", data=self.jointAngleXZY)
+            angularVelocity = f.create_dataset("angularVelocity", data=self.angularVelocity)
+            angularAcceleration = f.create_dataset("angularAcceleration", data=self.angularAcceleration)
+            position = f.create_dataset("position", data=self.position)
+            orientation = f.create_dataset("orientation", data=self.orientation)
+            centerOfMass = f.create_dataset("centerOfMass", data=self.centerOfMass)
+
+        
+            
+            
 
