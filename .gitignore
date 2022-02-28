@@ -5,3 +5,5 @@ mvnx_video.m
 load_mvnx.m
 .DS_Store
 build/
+env/
+.vscode/
