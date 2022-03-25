@@ -2,6 +2,8 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import h5py
+import re
+
 
 class MVNX:
     """
@@ -11,21 +13,22 @@ class MVNX:
 
     Can also be used as a command line tool.
     """
+
     def __init__(self, path, orientation=None, position=None, velocity=None, \
-                       acceleration=None, angularVelocity=None, angularAcceleration=None, \
-                       footContacts=None, sensorFreeAcceleration=None, sensorMagneticField=None, \
-                       sensorOrientation=None, jointAngle=None, jointAngleXZY=None, jointAngleErgo=None, \
-                       centerOfMass=None, mapping=None, sensors=None, segments=None, joints=None, \
-                       root=None, mvn=None, comment=None, subject=None, version=None, build=None, label=None, \
-                       frameRate=None, segmentCount=None, recordingDate=None, configuration=None, userScenario=None, \
-                       securityCode=None, modality=None, time=None, index=None, timecode=None, ms=None):
-        if orientation is None:                       
+                 acceleration=None, angularVelocity=None, angularAcceleration=None, \
+                 footContacts=None, sensorFreeAcceleration=None, sensorMagneticField=None, \
+                 sensorOrientation=None, jointAngle=None, jointAngleXZY=None, jointAngleErgo=None, \
+                 centerOfMass=None, mapping=None, sensors=None, segments=None, joints=None, \
+                 root=None, mvn=None, comment=None, subject=None, version=None, build=None, label=None, \
+                 frameRate=None, segmentCount=None, recordingDate=None, configuration=None, userScenario=None, \
+                 securityCode=None, modality=None, time=None, index=None, timecode=None, ms=None):
+        if orientation is None:
             self.orientation = []
         if position is None:
             self.position = []
         if velocity is None:
             self.velocity = []
-        if acceleration is None:    
+        if acceleration is None:
             self.acceleration = []
         if angularVelocity is None:
             self.angularVelocity = []
@@ -52,7 +55,7 @@ class MVNX:
         if segments is None:
             self.segments = {}
         if joints is None:
-            self.joints = {} 
+            self.joints = {}
         if mapping is None:
             self.mapping = {"orientation": 0,
                             "position": 1,
@@ -60,11 +63,11 @@ class MVNX:
                             "acceleration": 3,
                             "angularVelocity": 4,
                             "angularAcceleration": 5,
-                            "footContacts": 6, 
+                            "footContacts": 6,
                             "sensorFreeAcceleration": 7,
                             "sensorMagneticField": 8,
                             "sensorOrientation": 9,
-                            "jointAngle": 10, 
+                            "jointAngle": 10,
                             "jointAngleXZY": 11,
                             "jointAngleErgo": 12,
                             "centerOfMass": 13}
@@ -75,7 +78,7 @@ class MVNX:
         if index is None:
             self.index = []
         else:
-            self.index = index 
+            self.index = index
         if timecode is None:
             self.timecode = []
         else:
@@ -90,6 +93,7 @@ class MVNX:
         self.version = version
         self.build = build
         self.label = label
+        self.subject = subject
         self.frameRate = frameRate
         self.segmentCount = segmentCount
         self.recordingDate = recordingDate
@@ -108,8 +112,11 @@ class MVNX:
 
     def __repr__(self):
         return f'<MVNX ({self.path})>'
-             
-      
+
+    def namespace(self, element):
+        m = re.match(r'\{.*\}', element.tag)
+        return m.group(0) if m else ''
+
     def parse_mvnx(self, path):
         """
         Take a path to an MVNX file and parse it
@@ -119,20 +126,35 @@ class MVNX:
         """
         tree = ET.parse(path)
         self.root = tree.getroot()
-        self.mvn = self.root[0]
-        self.version = self.root[0].attrib['version']
-        self.build = self.root[0].attrib['build']
-        self.comment = self.root[1].text
-        self.label = self.root[2].attrib['label']
-        self.frameRate = self.root[2].attrib['frameRate']
-        self.segmentCount = self.root[2].attrib['segmentCount']
-        self.recordingDate = self.root[2].attrib['recDate']
-        self.configuration = self.root[2].attrib['configuration']
-        self.userScenario = self.root[2].attrib['userScenario']
-        self.securityCode = self.root[3].attrib['code']
+        self.ns = self.namespace(self.root)
+        self.mvn = self.root.find(self.ns + 'mvn')
+        # self.version = self.root[0].attrib['version']
+        self.version = self.mvn.attrib['version']
+        # self.build = self.root[0].attrib['build']
+        self.build = self.mvn.attrib['build']
+        #self.comment = self.root[1].text
+        self.comment = self.root.find(self.ns + 'comment').text
+        #self.label = self.root[2].attrib['label']
+        self.subject = self.root.find(self.ns + 'subject')
+        self.label = self.subject.attrib['label']
+        self.frameRate = self.subject.attrib['frameRate']
+        self.frameRate_ = self.subject.attrib['frameRate']
+        self.segmentCount = self.subject.attrib['segmentCount']
+        self.recordingDate = self.subject.attrib['recDate']
+        try:
+            self.configuration = self.subject.attrib['configuration']
+        except:
+            print("No configuration for subject provided. Using FullBody as default.")
+            self.configuration = "FullBody"
+        try:
+            self.userScenario = self.subject.attrib['userScenario']
+        except:
+            print("No user scenarios for subject provided. Using multiLevel as default.")
+            self.configuration = "multiLevel"
+
+        self.securityCode = self.root.find(self.ns + 'securityCode').attrib['code']
         return self.root
-    
-    
+
     def parse_modality(self, modality):
 
         """[With a given XML Tree, parse out the salient modalities within each frame]
@@ -144,35 +166,47 @@ class MVNX:
         """
 
         holding_list = []
-        frames = self.root[2][6]
+        #frames = self.root[2][6]
+        frames = self.subject.find(self.ns + 'frames')
         for frame in tqdm(frames[3:]):
-            for child in frame[self.mapping[modality]:self.mapping[modality]+1]:
-                holding_list.append(child.text.split(' '))           
+            for child in frame[self.mapping[modality]:self.mapping[modality] + 1]:
+                holding_list.append(child.text.split(' '))
         holding_list = np.array(holding_list)
+        try:
+            holding_list = holding_list.astype(float)
+        except:
+            print("Ignoring element, since it's not a floatable value")
+            return None
         return holding_list.astype(float)
 
     def parse_time(self):
-        frames = self.root[2][6][3:]
+        frames = self.subject.find(self.ns + 'frames')[3:]
         for frame in tqdm(frames):
             self.time.append(frame.attrib['time'])
         return self.time
-    
+
     def parse_index(self):
-        frames = self.root[2][6][3:]
+        frames = self.subject.find(self.ns + 'frames')[3:]
         for frame in tqdm(frames):
             self.index.append(frame.attrib['index'])
         return self.index
-    
+
     def parse_timecode(self):
-        frames = self.root[2][6][3:]
+        frames = self.subject.find(self.ns + 'frames')[3:]
         for frame in tqdm(frames):
-            self.timecode.append(frame.attrib['tc'])
+            if 'tc' in  frame.attrib:
+                self.timecode.append(frame.attrib['tc'])
+            else:
+                self.timecode.append('')
         return self.timecode
-    
+
     def parse_ms(self):
-        frames = self.root[2][6][3:]
+        frames = self.subject.find(self.ns + 'frames')[3:]
         for frame in tqdm(frames):
-            self.ms.append(frame.attrib['ms'])
+            if 'mc' in frame.attrib:
+                self.ms.append(frame.attrib['ms'])
+            else:
+                self.ms.append('')
         return self.ms
 
     def parse_modalities(self, *args):
@@ -181,19 +215,41 @@ class MVNX:
             return self.parse_modality(arg)
 
     def parse_sensors(self):
-        for sensor in tqdm(self.root[2][2]):
-            self.sensors.append(sensor.attrib['label'])
-        return self.sensors
-    
+        #sensors = self.root[2][2]
+
+        sensors =  self.subject.find(self.ns + 'sensors')
+        if sensors:
+
+            for sensor in tqdm(self.root[2][2]):
+                self.sensors.append(sensor.attrib['label'])
+            return self.sensors
+        else:
+            return None
+
     def parse_segments(self):
-        for segment in tqdm(self.root[2][1]):
-            self.segments[segment.attrib['id']] = segment.attrib['label']
-        return self.segments
-    
+        #segments = self.root[2][1]
+
+        segments = self.subject.find(self.ns + 'segments')
+
+        if segments:
+            for segment in tqdm(segments):
+                self.segments[segment.attrib['id']] = segment.attrib['label']
+            return self.segments
+        else:
+            return None
+
     def parse_joints(self):
-        for joint in tqdm(self.root[2][3]):
-            self.joints[joint.attrib['label']] = [joint[0].text, joint[1].text]
-        return self.joints
+
+        #joints = self.root[2][3]
+
+        joints = self.subject.find(self.ns + 'joints')
+
+        if joints:
+            for joint in tqdm(joints):
+                self.joints[joint.attrib['label']] = [joint[0].text, joint[1].text]
+            return self.joints
+        else:
+            return None
 
     def parse_all(self):
         for key in tqdm(self.mapping.keys()):
@@ -219,8 +275,3 @@ class MVNX:
             position = f.create_dataset("position", data=self.position)
             orientation = f.create_dataset("orientation", data=self.orientation)
             centerOfMass = f.create_dataset("centerOfMass", data=self.centerOfMass)
-
-        
-            
-            
-
